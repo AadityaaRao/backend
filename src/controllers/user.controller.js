@@ -14,7 +14,7 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new ApiError(400, "All fields are mandatory");
     }
 
-    const existingUser = User.findOne(
+    const existingUser = await User.findOne(
         {
             $or : [{username}, {email}]
         }
@@ -25,8 +25,8 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new ApiError(409, "Username or Email already exists!");
     }
     
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
     if(!avatarLocalPath)
     {
@@ -56,7 +56,7 @@ const registerUser = asyncHandler( async (req, res) => {
 
     if(!createdUser)
     {
-        throw new ApiError(500, "Something went wrong the DB insertion")
+        throw new ApiError(500, "Something went wrong with the DB insertion")
     }
     
     return res.status(201).json(
